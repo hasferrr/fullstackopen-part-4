@@ -110,3 +110,26 @@ describe('most likes', () => {
     })
   })
 })
+
+describe('most blogs', () => {
+  test('most blogs of empty array', () => {
+    const result = listHelper.mostBlogs([])
+    expect(result).toEqual({})
+  })
+
+  test('most blogs of 1 blog in the array', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual({
+      author: listWithOneBlog[0].author,
+      blogs: 1
+    })
+  })
+
+  test('most blogs of > 1 blogs in the array', () => {
+    const result = listHelper.mostBlogs(blogs)
+    expect(result).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 3
+    })
+  })
+})
