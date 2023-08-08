@@ -43,9 +43,38 @@ const mostBlogs = (blogs) => {
   return { author: author[maxAndIndex.index], blogs: maxAndIndex.max }
 }
 
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) {
+    return {}
+  }
+
+  const authorAndBlogNumber = {}
+
+  for (let i = 0; i < blogs.length; i++) {
+    if (authorAndBlogNumber[blogs[i].author] === undefined) {
+      authorAndBlogNumber[blogs[i].author] = blogs[i].likes
+    } else {
+      authorAndBlogNumber[blogs[i].author] += blogs[i].likes
+    }
+  }
+
+  const author = Object.keys(authorAndBlogNumber)
+  const totalLikes = Object.values(authorAndBlogNumber)
+  const maxAndIndex = { max: -1, index: -1 }
+
+  for (let i = 0; i < author.length; i++) {
+    if (totalLikes[i] > maxAndIndex.max) {
+      maxAndIndex.max = totalLikes[i]
+      maxAndIndex.index = i
+    }
+  }
+  return { author: author[maxAndIndex.index], likes: maxAndIndex.max }
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }

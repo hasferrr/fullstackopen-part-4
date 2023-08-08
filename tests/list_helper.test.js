@@ -86,7 +86,7 @@ describe('total likes', () => {
   })
 })
 
-describe('most likes', () => {
+describe('most likes favoriteBlog', () => {
   test('most likes of empty array', () => {
     const result = listHelper.favoriteBlog([])
     expect(result).toEqual({})
@@ -130,6 +130,29 @@ describe('most blogs', () => {
     expect(result).toEqual({
       author: 'Robert C. Martin',
       blogs: 3
+    })
+  })
+})
+
+describe('the most total likes of an author', () => {
+  test('the most total likes of an author of empty array', () => {
+    const result = listHelper.mostLikes([])
+    expect(result).toEqual({})
+  })
+
+  test('the most total likes of an author of 1 blog in the array', () => {
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result).toEqual({
+      author: listWithOneBlog[0].author,
+      likes: 5
+    })
+  })
+
+  test('the most total likes of an author of > 1 blogs in the array', () => {
+    const result = listHelper.mostLikes(blogs)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 17
     })
   })
 })
