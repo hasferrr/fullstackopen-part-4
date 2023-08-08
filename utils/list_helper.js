@@ -15,7 +15,7 @@ const favoriteBlog = (blogs) => {
   return mostLikes.likes === -1 ? {} : mostLikes
 }
 
-const mostBlogs = (blogs) => {
+const abstractFunctionForMostSomething = (blogs, typeMost, f) => {
   if (blogs.length === 0) {
     return {}
   }
@@ -24,51 +24,34 @@ const mostBlogs = (blogs) => {
 
   for (let i = 0; i < blogs.length; i++) {
     if (authorAndBlogNumber[blogs[i].author] === undefined) {
-      authorAndBlogNumber[blogs[i].author] = 1
+      authorAndBlogNumber[blogs[i].author] = f(blogs[i].likes)
     } else {
-      authorAndBlogNumber[blogs[i].author]++
+      authorAndBlogNumber[blogs[i].author] = authorAndBlogNumber[blogs[i].author] + f(blogs[i].likes)
     }
   }
 
   const author = Object.keys(authorAndBlogNumber)
-  const blogsNumber = Object.values(authorAndBlogNumber)
+  const resultNumber = Object.values(authorAndBlogNumber)
   const maxAndIndex = { max: -1, index: -1 }
 
   for (let i = 0; i < author.length; i++) {
-    if (blogsNumber[i] > maxAndIndex.max) {
-      maxAndIndex.max = blogsNumber[i]
+    if (resultNumber[i] > maxAndIndex.max) {
+      maxAndIndex.max = resultNumber[i]
       maxAndIndex.index = i
     }
   }
-  return { author: author[maxAndIndex.index], blogs: maxAndIndex.max }
+
+  const returnValue = { author: author[maxAndIndex.index] }
+  returnValue[typeMost] = maxAndIndex.max
+  return returnValue
+}
+
+const mostBlogs = (blogs) => {
+  return abstractFunctionForMostSomething(blogs, 'blogs', () => 1)
 }
 
 const mostLikes = (blogs) => {
-  if (blogs.length === 0) {
-    return {}
-  }
-
-  const authorAndBlogNumber = {}
-
-  for (let i = 0; i < blogs.length; i++) {
-    if (authorAndBlogNumber[blogs[i].author] === undefined) {
-      authorAndBlogNumber[blogs[i].author] = blogs[i].likes
-    } else {
-      authorAndBlogNumber[blogs[i].author] += blogs[i].likes
-    }
-  }
-
-  const author = Object.keys(authorAndBlogNumber)
-  const totalLikes = Object.values(authorAndBlogNumber)
-  const maxAndIndex = { max: -1, index: -1 }
-
-  for (let i = 0; i < author.length; i++) {
-    if (totalLikes[i] > maxAndIndex.max) {
-      maxAndIndex.max = totalLikes[i]
-      maxAndIndex.index = i
-    }
-  }
-  return { author: author[maxAndIndex.index], likes: maxAndIndex.max }
+  return abstractFunctionForMostSomething(blogs, 'likes', v => v)
 }
 
 module.exports = {
