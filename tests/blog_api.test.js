@@ -109,8 +109,8 @@ test('verify missing "url" property', async () => {
 })
 
 test('deleting a single blog post resource', async () => {
-  const response = await api.get('/api/blogs')
-  const id = response.body[1].id
+  const beginningData = await api.get('/api/blogs')
+  const id = beginningData.body[1].id
 
   await api
     .delete(`/api/blogs/${id}`)
@@ -118,7 +118,26 @@ test('deleting a single blog post resource', async () => {
 
   const newData = await api.get('/api/blogs')
   expect(newData.body).toHaveLength(1)
-  expect(newData.body).toStrictEqual([response.body[0]])
+  expect(newData.body).toStrictEqual([beginningData.body[0]])
+})
+
+test('updating the information of an individual blog', async () => {
+  const beginningData = await api.get('/api/blogs')
+  const id = beginningData.body[1].id
+
+  await api
+    .put(`/api/blogs/${id}`)
+    .send({
+      title: 'Functional Progarmming',
+      author: 'hasferrr',
+      url: 'http://immutable.com',
+      likes: 778
+    })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  const newData = await api.get('/api/blogs')
+  expect(newData.body[1]).toEqual({ ...beginningData.body[1], likes: 778 })
 })
 
 afterAll(async () => {
