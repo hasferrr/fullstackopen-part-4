@@ -78,6 +78,36 @@ test('likes property is missing, it will default to the value 0', async () => {
   expect(response.body[2].likes).toBe(0)
 })
 
+test('verify missing "title" property', async () => {
+  const newBlog = {
+    author: 'University of Helsinki',
+    url: 'https://fullstackopen.com/',
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+  expect(response.body).toEqual({ error: 'missing title property' })
+})
+
+test('verify missing "url" property', async () => {
+  const newBlog = {
+    title: 'Full Stack Open',
+    author: 'University of Helsinki',
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+  expect(response.body).toEqual({ error: 'missing url property' })
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
