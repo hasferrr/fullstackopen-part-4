@@ -108,6 +108,19 @@ test('verify missing "url" property', async () => {
   expect(response.body).toEqual({ error: 'missing url property' })
 })
 
+test('deleting a single blog post resource', async () => {
+  const response = await api.get('/api/blogs')
+  const id = response.body[1].id
+
+  await api
+    .delete(`/api/blogs/${id}`)
+    .expect(204)
+
+  const newData = await api.get('/api/blogs')
+  expect(newData.body).toHaveLength(1)
+  expect(newData.body).toStrictEqual([response.body[0]])
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
