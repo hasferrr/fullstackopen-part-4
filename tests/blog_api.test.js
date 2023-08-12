@@ -60,6 +60,24 @@ test('HTTP POST test successfully adds a blog', async () => {
   expect(response.body[2].title).toBe('Full Stack Open')
 })
 
+test('likes property is missing, it will default to the value 0', async () => {
+  const newBlog = {
+    title: 'Full Stack Open',
+    author: 'University of Helsinki',
+    url: 'https://fullstackopen.com/',
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(3)
+  expect(response.body[2].likes).toBe(0)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
