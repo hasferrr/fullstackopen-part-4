@@ -10,15 +10,15 @@ beforeEach(async () => {
 
   const initialBlogs = [
     {
-      title: "SICP",
-      author: "hasferrr",
-      url: "http://parentheses.com",
+      title: 'SICP',
+      author: 'hasferrr',
+      url: 'http://parentheses.com',
       likes: 999
     },
     {
-      title: "Functional Progarmming",
-      author: "hasferrr",
-      url: "http://immutable.com",
+      title: 'Functional Progarmming',
+      author: 'hasferrr',
+      url: 'http://immutable.com',
       likes: 777
     },
   ]
@@ -39,6 +39,25 @@ test('HTTP GET: blog are returned as JSON', async () => {
 test('unique identifier of the blog is "id"', async () => {
   const response = await api.get('/api/blogs')
   expect(response.body[0].id).toBeDefined()
+})
+
+test('HTTP POST test successfully adds a blog', async () => {
+  const newBlog = {
+    title: 'Full Stack Open',
+    author: 'University of Helsinki',
+    url: 'https://fullstackopen.com/',
+    likes: 555
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(3)
+  expect(response.body[2].title).toBe('Full Stack Open')
 })
 
 afterAll(async () => {
