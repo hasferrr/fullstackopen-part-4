@@ -2,26 +2,12 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const { initialBlogs } = require('./test_helper')
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany()
-
-  const initialBlogs = [
-    {
-      title: 'SICP',
-      author: 'hasferrr',
-      url: 'http://parentheses.com',
-      likes: 999
-    },
-    {
-      title: 'Functional Progarmming',
-      author: 'hasferrr',
-      url: 'http://immutable.com',
-      likes: 777
-    },
-  ]
 
   for (let i = 0; i < initialBlogs.length; i++) {
     let blogObject = new Blog(initialBlogs[i])
@@ -56,7 +42,7 @@ test('HTTP POST test successfully adds a blog', async () => {
     .expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(3)
+  expect(response.body).toHaveLength(initialBlogs.length + 1)
   expect(response.body[2].title).toBe('Full Stack Open')
 })
 
@@ -74,7 +60,7 @@ test('likes property is missing, it will default to the value 0', async () => {
     .expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(3)
+  expect(response.body).toHaveLength(initialBlogs.length + 1)
   expect(response.body[2].likes).toBe(0)
 })
 
@@ -117,7 +103,7 @@ test('deleting a single blog post resource', async () => {
     .expect(204)
 
   const newData = await api.get('/api/blogs')
-  expect(newData.body).toHaveLength(1)
+  expect(newData.body).toHaveLength(initialBlogs.length - 1)
   expect(newData.body).toStrictEqual([beginningData.body[0]])
 })
 
