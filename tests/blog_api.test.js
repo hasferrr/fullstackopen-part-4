@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
-const { initialBlogs } = require('./test_helper')
+const { initialBlogs, fetchAllBlog } = require('./test_helper')
 
 const api = supertest(app)
 
@@ -23,8 +23,8 @@ test('HTTP GET: blog are returned as JSON', async () => {
 })
 
 test('unique identifier of the blog is "id"', async () => {
-  const response = await api.get('/api/blogs')
-  expect(response.body[0].id).toBeDefined()
+  const response = await fetchAllBlog()
+  expect(response[0].id).toBeDefined()
 })
 
 test('HTTP POST test successfully adds a blog', async () => {
@@ -41,9 +41,9 @@ test('HTTP POST test successfully adds a blog', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(initialBlogs.length + 1)
-  expect(response.body[2].title).toBe('Full Stack Open')
+  const response = await fetchAllBlog()
+  expect(response).toHaveLength(initialBlogs.length + 1)
+  expect(response[2].title).toBe('Full Stack Open')
 })
 
 test('likes property is missing, it will default to the value 0', async () => {
@@ -59,9 +59,9 @@ test('likes property is missing, it will default to the value 0', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(initialBlogs.length + 1)
-  expect(response.body[2].likes).toBe(0)
+  const response = await fetchAllBlog()
+  expect(response).toHaveLength(initialBlogs.length + 1)
+  expect(response[2].likes).toBe(0)
 })
 
 test('verify missing "title" property', async () => {
@@ -95,21 +95,21 @@ test('verify missing "url" property', async () => {
 })
 
 test('deleting a single blog post resource', async () => {
-  const beginningData = await api.get('/api/blogs')
-  const id = beginningData.body[1].id
+  const beginningData = await fetchAllBlog()
+  const id = beginningData[1].id
 
   await api
     .delete(`/api/blogs/${id}`)
     .expect(204)
 
-  const newData = await api.get('/api/blogs')
-  expect(newData.body).toHaveLength(initialBlogs.length - 1)
-  expect(newData.body).toStrictEqual([beginningData.body[0]])
+  const newData = await fetchAllBlog()
+  expect(newData).toHaveLength(initialBlogs.length - 1)
+  expect(newData).toStrictEqual([beginningData[0]])
 })
 
 test('updating the information of an individual blog', async () => {
-  const beginningData = await api.get('/api/blogs')
-  const id = beginningData.body[1].id
+  const beginningData = await fetchAllBlog()
+  const id = beginningData[1].id
 
   await api
     .put(`/api/blogs/${id}`)
@@ -122,8 +122,8 @@ test('updating the information of an individual blog', async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  const newData = await api.get('/api/blogs')
-  expect(newData.body[1]).toEqual({ ...beginningData.body[1], likes: 778 })
+  const newData = await fetchAllBlog()
+  expect(newData[1]).toEqual({ ...beginningData[1], likes: 778 })
 })
 
 afterAll(async () => {
