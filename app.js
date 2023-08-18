@@ -8,7 +8,6 @@ const usersRouter = require('./controllers/users')
 
 const app = express()
 
-//@ts-ignore
 mongoose.connect(config.MONGODB_URI)
 
 app.use(cors())
