@@ -20,7 +20,16 @@ const fetchAllBlog = async () => {
   return blogs.map(b => b.toJSON())
 }
 
+const initialUsers = [
+  {
+    username: 'person',
+    password: 'something',
+    name: 'person',
+  },
+]
+
 module.exports = {
   initialBlogs,
-  fetchAllBlog
+  fetchAllBlog,
+  initialUsers,
 }
