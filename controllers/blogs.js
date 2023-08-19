@@ -1,6 +1,9 @@
+const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
+
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const { SECRET } = require('../utils/config')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', {
@@ -11,9 +14,19 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
+const getTokenForm = request => {
+  const authorization = request.get('authorization')
+
+  if (authorization && authorization.startsWith('bearer ')) {
+    return authorization.replace('bearer ', '')
+  }
+  return null
+}
+
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
 
+  // check title and url
   if (body.title === undefined) {
     return response.status(400).json({ error: 'missing title property' })
   }
@@ -21,7 +34,14 @@ blogsRouter.post('/', async (request, response) => {
     return response.status(400).json({ error: 'missing url property' })
   }
 
-  const user = await User.findById(body.userId)
+  // check valid token
+  const decodedToken = jwt.verify(getTokenForm(request), SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'invalid token' })
+  }
+
+  // save blog
+  const user = await User.findById(decodedToken.id)
 
   const blog = new Blog({
     ...body,
