@@ -9,4 +9,4 @@ Fullstack Open Part 4
 
 ## Other
 
-Don't forget to `MONGODB_URI`, `TEST_MONGODB_URI`, `PORT`, and `SECRET` into environment variable
+Don't forget to add `MONGODB_URI`, `TEST_MONGODB_URI`, `PORT`, and `SECRET` into environment variable
