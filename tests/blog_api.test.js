@@ -149,7 +149,8 @@ test('updating the information of an individual blog', async () => {
       title: 'Functional Progarmming',
       author: 'hasferrr',
       url: 'http://immutable.com',
-      likes: 778
+      likes: 778,
+      user: beginningData[1].user,
     })
     .expect(200)
     .expect('Content-Type', /application\/json/)
